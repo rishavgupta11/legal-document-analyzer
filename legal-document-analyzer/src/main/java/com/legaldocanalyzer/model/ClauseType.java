@@ -1,0 +1,16 @@
+package com.legaldocanalyzer.model;
+
+public enum ClauseType {
+    NON_COMPETE,
+    INDEMNITY,
+    CONFIDENTIALITY,
+    PAYMENT_TERMS,
+    TERMINATION,
+    LIABILITY_LIMITATION,
+    FORCE_MAJEURE,
+    INTELLECTUAL_PROPERTY,
+    DISPUTE_RESOLUTION,
+    GOVERNING_LAW,
+    WARRANTY,
+    OTHER
+}
