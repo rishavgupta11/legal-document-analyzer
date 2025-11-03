@@ -1,29 +1,179 @@
-﻿# Legal-Document-Analyzer-Spring-Boot
- 
-Project Overview: AI-Powered Legal Document Analyzer
+# Legal Document Analyzer
 
-The AI-Powered Legal Document Analyzer is a backend application designed to help legal
-professionals, businesses, and individuals analyze legal documents efficiently. This tool
-leverages AI/ML to identify high-risk clauses, ambiguous terms, and potential compliance
-issues in legal documents such as contracts, agreements, and policies. It provides actionable
-recommendations for mitigating risks and ensures that the document aligns with legal and
-regulatory standards.
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-Why Build This Project?
+A Spring Boot application that automates legal contract risk assessment by analyzing uploaded documents and identifying potentially risky clauses.
 
-Legal document analysis is often tedious, time-consuming, and prone to human error. With
-the increasing complexity of legal language and the volume of contracts that businesses
-handle, there is a critical need for automation in this domain. By building this project:
+## 🌟 Features
 
-1. Efficiency: It automates the review process, reducing the time needed to analyze
-documents.
-2. Risk Mitigation: Identifies high-risk clauses, helping businesses avoid legal disputes.
-3. Scalability: Enables organizations to handle large volumes of legal documents
-without hiring additional staff.
-4. Accessibility: Provides individuals and small businesses access to affordable legal
-insights.
-This tool is ideal for law firms, startups, compliance teams, and anyone who regularly works
-with legal documents.
+- **Document Upload**: Support for PDF, DOC, and DOCX files (up to 10MB)
+- **Text Extraction**: Automatic text extraction using Apache Tika
+- **Risk Analysis**: Identifies 12+ clause types including:
+  - Non-Compete Clauses
+  - Indemnity Agreements
+  - Confidentiality Clauses
+  - Payment Terms
+  - Termination Clauses
+  - Liability Limitations
+- **Risk Scoring**: Automated scoring system (0-100 scale)
+- **Recommendations**: AI-generated actionable recommendations
+- **RESTful APIs**: 8 well-documented endpoints
+- **Swagger UI**: Interactive API documentation
+
+## 🛠️ Tech Stack
+
+- **Backend**: Java 17, Spring Boot 3.1.5, Spring Security
+- **Database**: MySQL 8.0, Hibernate/JPA
+- **Libraries**: Apache Tika 2.9.0, Maven
+- **API Documentation**: Swagger/OpenAPI
+- **Testing**: Postman, JUnit
+
+## 📋 Prerequisites
+
+- Java 17 or higher
+- Maven 3.6+
+- MySQL 8.0+
+- Postman (for testing)
+
+## 🚀 Installation & Setup
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/YOUR_USERNAME/legal-document-analyzer.git
+cd legal-document-analyzer
+```
+
+### 2. Create MySQL database
+```sql
+CREATE DATABASE legal_analyzer_db;
+```
+
+### 3. Update application.properties
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/legal_analyzer_db
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
+```
+
+### 4. Build and run
+```bash
+mvn clean install
+mvn spring-boot:run
+```
+
+### 5. Access the application
+- **API Base URL**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+
+## 📡 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/legal-documents/upload` | Upload document for analysis |
+| GET | `/api/legal-documents/report/{id}` | Get analysis report |
+| GET | `/api/legal-documents/recommendations/{id}` | Get recommendations |
+| GET | `/api/legal-documents/status/{id}` | Get processing status |
+| GET | `/api/legal-documents/user/documents` | Get user's documents |
+| DELETE | `/api/legal-documents/{id}` | Delete document |
+| POST | `/api/legal-documents/{id}/reanalyze` | Reanalyze document |
+| GET | `/api/legal-documents/health` | Health check |
+
+## 📸 Screenshots
+
+### Upload Document
+![Upload](screenshots/upload.png)
+
+### Analysis Report
+![Report](screenshots/report.png)
+
+### Swagger UI
+![Swagger](screenshots/swagger.png)
+
+## 🧪 Testing
+
+### Using Postman
+1. Import the Postman collection from `/postman/collection.json`
+2. Upload a document to `/api/legal-documents/upload`
+3. Use the returned `documentId` to fetch reports
+
+### Using cURL
+```bash
+# Upload document
+curl -X POST http://localhost:8080/api/legal-documents/upload \
+  -F "file=@contract.pdf"
+
+# Get report
+curl http://localhost:8080/api/legal-documents/report/{documentId}
+```
+
+## 🗄️ Database Schema
+```sql
+documents
+├── id (PK)
+├── filename
+├── original_filename
+├── file_path
+├── file_size
+├── content_type
+├── status
+└── upload_time
+
+analysis_results
+├── id (PK)
+├── document_id (FK)
+├── risk_score
+├── total_clauses
+├── compliance_score
+└── overall_risk_level
+
+risk_clauses
+├── id (PK)
+├── analysis_result_id (FK)
+├── clause_type
+├── risk_level
+└── content
+
+recommendations
+├── id (PK)
+├── analysis_result_id (FK)
+├── type
+├── priority
+└── description
+```
+
+## 🎯 Future Enhancements
+
+- [ ] Integrate real AI/ML models (OpenAI GPT, spaCy)
+- [ ] Add JWT authentication
+- [ ] Create React/Angular frontend
+- [ ] Implement async processing with queues
+- [ ] Add email notifications
+- [ ] Export reports to PDF
+- [ ] Support more document formats
+
+## 👨‍💻 Author
+
+**Your Name**
+- GitHub: [@yourusername](https://github.com/yourusername)
+- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
+- Email: your.email@example.com
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- Spring Boot Team
+- Apache Tika Project
+- Legal contract templates from Docracy
+
+---
+
+⭐ Star this repo if you found it helpful!
 
 
 
