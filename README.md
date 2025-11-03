@@ -42,7 +42,7 @@ A Spring Boot application that automates legal contract risk assessment by analy
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/legal-document-analyzer.git
+git clone https://github.com/rishavgupta11/legal-document-analyzer.git
 cd legal-document-analyzer
 ```
 
@@ -65,8 +65,8 @@ mvn spring-boot:run
 ```
 
 ### 5. Access the application
-- **API Base URL**: http://localhost:8080
-- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **API Base URL**: http://localhost:8081
+- **Swagger UI**: http://localhost:8081/swagger-ui.html
 
 ## 📡 API Endpoints
 
@@ -102,11 +102,11 @@ mvn spring-boot:run
 ### Using cURL
 ```bash
 # Upload document
-curl -X POST http://localhost:8080/api/legal-documents/upload \
+curl -X POST http://localhost:8081/api/legal-documents/upload \
   -F "file=@contract.pdf"
 
 # Get report
-curl http://localhost:8080/api/legal-documents/report/{documentId}
+curl http://localhost:8081/api/legal-documents/report/{documentId}
 ```
 
 ## 🗄️ Database Schema
@@ -157,9 +157,9 @@ recommendations
 ## 👨‍💻 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+- GitHub: [@rishavgupta11](https://github.com/rishavgupta11)
+- LinkedIn: [Your LinkedIn](https://linkedin.com/in/rishavv1/)
+- Email: rishav.mh103@gmail.com
 
 ## 📄 License
 
@@ -174,6 +174,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 ⭐ Star this repo if you found it helpful!
+
 
 
 
