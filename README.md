@@ -83,14 +83,23 @@ mvn spring-boot:run
 
 ## 📸 Screenshots
 
-### Upload Document
-![Upload](screenshots/upload.png)
+### 📤 Upload Document
+![Upload Page](screenshots/upload-page.png)
 
-### Analysis Report
-![Report](screenshots/report.png)
+### ⚠️ Risk Score Summary
+![Risk Score](screenshots/risk-score.png)
 
-### Swagger UI
-![Swagger](screenshots/swagger.png)
+### 📑 Detected Risk Clauses (Part 1)
+![Risk Clauses 1](screenshots/risk-clauses-1.png)
+
+### 📑 Detected Risk Clauses (Part 2)
+![Risk Clauses 2](screenshots/risk-clauses-2.png)
+
+### 📑 Detected Risk Clauses (Part 3)
+![Risk Clauses 3](screenshots/risk-clauses-3.png)
+
+### 💡 Recommendations
+![Recommendations](screenshots/recommendations.png)
 
 ## 🧪 Testing
 
@@ -174,6 +183,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 ⭐ Star this repo if you found it helpful!
+
 
 
 
