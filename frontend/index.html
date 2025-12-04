@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Document Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-bg: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            margin: 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--secondary-color);
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: var(--light-bg);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #d5dbdb;
+            border-color: var(--primary-color);
+        }
+
+        .upload-area.dragover {
+            background: #c8e6c9;
+            border-color: var(--success-color);
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .file-info {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .btn-primary {
+            background: var(--secondary-color);
+            border: none;
+            padding: 12px 40px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .risk-badge {
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .risk-low { background: #d4edda; color: #155724; }
+        .risk-medium { background: #fff3cd; color: #856404; }
+        .risk-high { background: #f8d7da; color: #721c24; }
+        .risk-critical { background: #721c24; color: white; }
+
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .result-section {
+            display: none;
+        }
+
+        .clause-item {
+            background: white;
+            padding: 20px;
+            border-left: 5px solid var(--secondary-color);
+            margin-bottom: 15px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .clause-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .recommendation-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stats-card {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .stats-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert-custom {
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        #documentHistory {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .document-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .document-item:hover {
+            background: var(--light-bg);
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <!-- Header -->
+    <div class="header">
+        <h1><i class="fas fa-gavel"></i> Legal Document Analyzer</h1>
+        <p>Upload your legal documents for automated risk assessment and analysis</p>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4"><i class="fas fa-cloud-upload-alt"></i> Upload Document</h4>
+
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-file-pdf upload-icon"></i>
+                        <h5>Drag & Drop your document here</h5>
+                        <p class="text-muted">or click to browse</p>
+                        <p class="text-muted"><small>Supported formats: PDF, DOC, DOCX (Max 10MB)</small></p>
+                        <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display: none;">
+                    </div>
+
+                    <div class="file-info" id="fileInfo">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file text-primary"></i>
+                                <span id="fileName" class="ms-2"></span>
+                                <span id="fileSize" class="text-muted ms-2"></span>
+                            </div>
+                            <button class="btn btn-sm btn-danger" id="removeFile">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="progress-container" id="progressContainer">
+                        <div class="text-center mb-3">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-3">Analyzing document...</p>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                 id="progressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary btn-lg" id="analyzeBtn" disabled>
+                            <i class="fas fa-search"></i> Analyze Document
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Sidebar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body stats-card">
+                    <i class="fas fa-chart-line" style="font-size: 48px; color: var(--secondary-color);"></i>
+                    <h5 class="mt-3">Quick Stats</h5>
+                    <hr>
+                    <div class="mb-3">
+                        <div class="stats-number" id="totalDocs">0</div>
+                        <div class="text-muted">Documents Analyzed</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="fas fa-history"></i> Recent Documents</h5>
+                    <hr>
+                    <div id="documentHistory">
+                        <p class="text-muted text-center">No documents yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="result-section" id="resultSection">
+        <div class="row">
+            <!-- Risk Summary -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Risk Score</h5>
+                        <div class="stats-number" id="riskScore">0</div>
+                        <div id="riskLevel" class="risk-badge mt-3">LOW</div>
+                        <hr>
+                        <div class="row text-center mt-3">
+                            <div class="col-6">
+                                <h6 id="totalClauses">0</h6>
+                                <small class="text-muted">Total Clauses</small>
+                            </div>
+                            <div class="col-6">
+                                <h6 id="riskyClauses">0</h6>
+                                <small class="text-muted">Risky Clauses</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5><i class="fas fa-file-alt"></i> Analysis Summary</h5>
+                        <hr>
+                        <p id="summary">Analysis summary will appear here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Clauses -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5><i class="fas fa-list-alt"></i> Detected Risk Clauses</h5>
+                <hr>
+                <div id="riskClausesList"></div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5><i class="fas fa-lightbulb"></i> Recommendations</h5>
+                <hr>
+                <div id="recommendationsList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE_URL = 'http://localhost:8081/api/legal-documents';
+    let selectedFile = null;
+    let currentDocId = null;
+
+    // Elements
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const progressContainer = document.getElementById('progressContainer');
+    const resultSection = document.getElementById('resultSection');
+
+    // Upload area click
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    // File selection
+    fileInput.addEventListener('change', (e) => {
+        handleFile(e.target.files[0]);
+    });
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        handleFile(e.dataTransfer.files[0]);
+    });
+
+    // Handle file
+    function handleFile(file) {
+        if (!file) return;
+
+        const validTypes = ['application/pdf', 'application/msword',
+                          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+        if (!validTypes.includes(file.type)) {
+            alert('Invalid file type! Please upload PDF, DOC, or DOCX files.');
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File size exceeds 10MB limit!');
+            return;
+        }
+
+        selectedFile = file;
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = `(${(file.size / 1024).toFixed(2)} KB)`;
+        fileInfo.style.display = 'block';
+        analyzeBtn.disabled = false;
+    }
+
+    // Remove file
+    document.getElementById('removeFile').addEventListener('click', () => {
+        selectedFile = null;
+        fileInput.value = '';
+        fileInfo.style.display = 'none';
+        analyzeBtn.disabled = true;
+    });
+
+    // Analyze button
+    analyzeBtn.addEventListener('click', uploadAndAnalyze);
+
+    async function uploadAndAnalyze() {
+        if (!selectedFile) return;
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        progressContainer.style.display = 'block';
+        analyzeBtn.disabled = true;
+        resultSection.style.display = 'none';
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Upload failed');
+
+            const data = await response.json();
+            currentDocId = data.documentId;
+
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                document.getElementById('progressBar').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => fetchResults(currentDocId), 500);
+                }
+            }, 200);
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to analyze document. Please try again.');
+            progressContainer.style.display = 'none';
+            analyzeBtn.disabled = false;
+        }
+    }
+
+    async function fetchResults(docId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/report/${docId}`);
+            const data = await response.json();
+
+            displayResults(data);
+            progressContainer.style.display = 'none';
+            resultSection.style.display = 'block';
+
+            // Update stats
+            updateStats();
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to fetch results');
+        }
+    }
+
+    function displayResults(data) {
+        // Risk score
+        document.getElementById('riskScore').textContent = data.riskScore || '0';
+        document.getElementById('totalClauses').textContent = data.totalClauses || '0';
+        document.getElementById('riskyClauses').textContent = data.riskyClauses || '0';
+
+        // Risk level
+        const riskLevel = data.overallRiskLevel || 'LOW';
+        const riskElement = document.getElementById('riskLevel');
+        riskElement.textContent = riskLevel;
+        riskElement.className = 'risk-badge risk-' + riskLevel.toLowerCase();
+
+        // Summary
+        document.getElementById('summary').textContent = data.summary || 'No summary available';
+
+        // Risk clauses
+        const clausesList = document.getElementById('riskClausesList');
+        clausesList.innerHTML = '';
+
+        if (data.riskClauses && data.riskClauses.length > 0) {
+            data.riskClauses.forEach(clause => {
+                clausesList.innerHTML += `
+                    <div class="clause-item">
+                        <div class="d-flex justify-content-between">
+                            <h6><i class="fas fa-exclamation-circle"></i> ${clause.clauseType.replace('_', ' ')}</h6>
+                            <span class="risk-badge risk-${clause.riskLevel.toLowerCase()}">${clause.riskLevel}</span>
+                        </div>
+                        <p class="mb-2"><strong>Content:</strong> ${clause.content || 'N/A'}</p>
+                        <p class="text-muted mb-0"><small>${clause.explanation || 'No explanation'}</small></p>
+                    </div>
+                `;
+            });
+        } else {
+            clausesList.innerHTML = '<p class="text-muted text-center">No risky clauses detected</p>';
+        }
+
+        // Recommendations
+        const recList = document.getElementById('recommendationsList');
+        recList.innerHTML = '';
+
+        if (data.recommendations && data.recommendations.length > 0) {
+            data.recommendations.forEach(rec => {
+                recList.innerHTML += `
+                    <div class="recommendation-card">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0"><i class="fas fa-lightbulb"></i> ${rec.title}</h6>
+                            <span class="badge bg-light text-dark">${rec.priority}</span>
+                        </div>
+                        <p class="mb-2">${rec.description}</p>
+                        <p class="mb-0"><strong>Suggested Action:</strong> ${rec.suggestedAction || 'N/A'}</p>
+                    </div>
+                `;
+            });
+        } else {
+            recList.innerHTML = '<p class="text-muted text-center">No recommendations available</p>';
+        }
+    }
+
+    function updateStats() {
+        const current = parseInt(document.getElementById('totalDocs').textContent);
+        document.getElementById('totalDocs').textContent = current + 1;
+    }
+
+    // Load document history
+    async function loadHistory() {
+        // You can implement this to fetch user documents
+    }
+
+    // Initial load
+    loadHistory();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
